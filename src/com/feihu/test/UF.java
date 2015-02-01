@@ -11,8 +11,10 @@ public class UF {
 	Map<Integer, Integer> treeIndex = new HashMap();
 	Map<Integer, Set<Integer>> indexTrees = new HashMap();
 	
-	void add(Integer... nodes) {
+	public void add(Integer... nodes) {
 		Integer index = Integer.MAX_VALUE;
+		
+		/*按照所有待加入节点最小代表节点，当然如果节点第一次加入，代表节点会是他自己*/
 		for(Integer node : nodes) {
 			
 			Integer tmpIndex = treeIndex.get(node);
@@ -24,10 +26,10 @@ public class UF {
 				index = tmpIndex;
 			}
 		}
-		
 		Set<Integer> childs = indexTrees.get(index);
 		if(childs == null) {
 			childs = new HashSet();
+			indexTrees.put(index, childs);
 		}
 		
 		for(Integer node : nodes) {
@@ -40,30 +42,53 @@ public class UF {
 				for(Integer bro : thisNodeBrothers) {
 					treeIndex.put(bro, index);
 				}
+				if(!thisIndex.equals( index )) {
+					indexTrees.remove( thisIndex );
+				}
 				childs.addAll( thisNodeBrothers );
 			}
 		}
 	}
 	
-	void print() {
+	/*判断是否为关联*/
+	public boolean isBrother(Integer node1, Integer node2) {
+		Integer index1 = treeIndex.get(node1);
+		if(index1 == null) {
+			return false;
+		}
+		
+		Integer index2 = treeIndex.get(node2);
+		if(index2 == null) {
+			return false;
+		}
+		
+		if(index1.equals(index2)) {
+			return true;
+		} else {
+			return false;
+		}
+		
+	}
+	
+	public void print() {
 		Set<Integer> keys = indexTrees.keySet();
 		for(Integer key : keys) {
-			System.out.println(key + ":" + indexTrees.get(key));
+			System.out.println("key "  + key + ":" + indexTrees.get(key));
 		}
 	}
 	
 	
 	public static void main(String args[]) {
-		Random rand = new Random(System.currentTimeMillis() / 1000);
-		UF uf = new UF();
-		for(int i = 0; i < 100; i++) {
-			int tmp1 = rand.nextInt() % 50000;
-			int tmp2 = rand.nextInt() % 50000;
-			uf.add(tmp1, tmp2);
-		}
 		
+		UF uf = new UF();
+		uf.add(4, 3);
+		uf.add(4,2);
+		uf.add( 8, 7);
+		uf.add(100,50);
+		uf.add(7, 2);
 		uf.print();
 		
-		
+		System.out.println(uf.isBrother(4, 8));
+		System.out.println(uf.isBrother(100, 2));
 	}
 }
