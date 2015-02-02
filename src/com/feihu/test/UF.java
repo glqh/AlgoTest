@@ -38,6 +38,9 @@ public class UF {
 				treeIndex.put(node, index);
 				childs.add( node );
 			} else {
+				if(index.equals(thisIndex)) {
+					continue;
+				}
 				Set<Integer> thisNodeBrothers = indexTrees.get(thisIndex);
 				for(Integer bro : thisNodeBrothers) {
 					treeIndex.put(bro, index);
@@ -81,14 +84,15 @@ public class UF {
 	public static void main(String args[]) {
 		
 		UF uf = new UF();
-		uf.add(4, 3);
-		uf.add(4,2);
-		uf.add( 8, 7);
-		uf.add(100,50);
-		uf.add(7, 2);
-		uf.print();
-		
-		System.out.println(uf.isBrother(4, 8));
-		System.out.println(uf.isBrother(100, 2));
+		System.out.println(System.currentTimeMillis());
+		for(int i = 0; i < 100000; i++) {
+			uf.add(i, i - 1);
+		}
+		System.out.println(System.currentTimeMillis());
+		System.out.println( uf.isBrother(-1, 99) );
+		System.out.println( uf.isBrother(2, 88) );
+		System.out.println( uf.isBrother(-1, 101) );
+		System.out.println( uf.isBrother(5, 99999) );
+		//uf.print();
 	}
 }
